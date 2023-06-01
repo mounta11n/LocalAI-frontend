@@ -68,15 +68,19 @@ const ChatGptInterface = () => {
             const line = lines[i];
             if (line.startsWith("data: ")) {
               const jsonStr = line.substring("data: ".length);
-              const json = JSON.parse(jsonStr);
-
-              // Check if the response contains choices and delta fields
-              if (json.choices && json.choices.length > 0 && json.choices[0].delta) {
-                const token = json.choices[0].delta.content;
-                if (token !== undefined) {
-                  assistantResponse += token;
-                  setCurrentAssistantMessage(assistantResponse);
+              if (jsonStr.trim() !== "[DONE]") {
+                const json = JSON.parse(jsonStr);
+          
+                // Check if the response contains choices and delta fields
+                if (json.choices && json.choices.length > 0 && json.choices[0].delta) {
+                  const token = json.choices[0].delta.content;
+                  if (token !== undefined) {
+                    assistantResponse += token;
+                    setCurrentAssistantMessage(assistantResponse);
+                  }
                 }
+              } else {
+                done = true;
               }
             }
           }
@@ -84,6 +88,7 @@ const ChatGptInterface = () => {
           partialData = lines[lines.length - 1];
         }
       }
+      
 
       // Add assistant response to messages
       setMessages((prevMessages) => [
@@ -102,12 +107,19 @@ const ChatGptInterface = () => {
     }
   };
 
+  const fetchModelsUsingCurl = async () => {
+    const response = await fetch("http://localhost:8080/v1/models");
+    const data = await response.json();
+    console.log("Fetched models:", data?.data); 
+    return data?.data || [];
+  };
+  
   useEffect(() => {
     const fetchModels = async () => {
       try {
-        const response = await fetch(`${host}/v1/models`);
-        const data = await response.json();
-        setModels(data?.data || []);
+        const models = await fetchModelsUsingCurl();
+        console.log("Setting models:", models);
+        setModels(models);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -140,21 +152,22 @@ const ChatGptInterface = () => {
 
   return (
     <div className="chat-page">
-      {/* Render dropdown list for models */}
-      <div className="model-dropdown">
-        <select
-          value={selectedModel}
-          onChange={handleModelChange}
-          disabled={isLoading}
-        >
-          <option value="">Select Model</option>
-          {models.map((model, index) => (
-            <option key={index} value={model.id}>
-              {model.id}
-            </option>
-          ))}
-        </select>
-      </div>
+    {/* Render dropdown list for models */}
+    <div className="model-dropdown">
+      {console.log("Rendering models:", models)} {/* Hinzufügen dieser Zeile */}
+      <select
+        value={selectedModel}
+        onChange={handleModelChange}
+        disabled={isLoading}
+      >
+        <option value="">Select Model</option>
+        {models.map((model, index) => (
+          <option key={index} value={model.id}>
+            {model.id}
+          </option>
+        ))}
+      </select>
+    </div>
       <div className="chat-container" ref={chatContainerRef}>
         <div className="chat-messages">
           {/* Render user input and chatbot responses */}

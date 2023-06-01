@@ -8,7 +8,7 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+  font-family: Consolas, source-code-pro, Menlo, Monaco, "Courier New",
     monospace;
 }
 
@@ -19,7 +19,7 @@ code {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #1d1d1d; /* Update background color to dark */
+  background-color: #1c1c1e; /* Update background color to dark */
   color: #fff; /* Update text color to white */
 }
 
@@ -28,8 +28,8 @@ code {
   font-size: 1.1rem;
   border-radius: 5px;
   border: none;
-  background-color: #292929;
-  color: #fff;
+  background-color: #3a3a3c;
+  color: #989898;
 }
 
 /* CSS for chat messages */
@@ -41,7 +41,7 @@ code {
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */
   overflow-y: scroll;
-  background-color: #292929; /* Update background color to dark */
+  background-color: #2c2c2e; /* Update background color to dark */
   border-radius: 10px;
   padding: 20px;
   box-sizing: border-box;
@@ -77,7 +77,7 @@ code {
   border-radius: 5px;
   font-size: 1.1rem;
   background-color: #fff; /* Update background color to white */
-  color: #1d1d1d; /* Update text color to dark */
+  color: #1c1c1e; /* Update text color to dark */
 }
 
 /* CSS for chat input */
@@ -93,7 +93,7 @@ code {
   font-size: 1.1rem;
   border-radius: 5px;
   border: none;
-  background-color: #292929;
+  background-color: #404044;
   color: #fff;
 }
 
@@ -101,21 +101,21 @@ code {
   padding: 10px 20px;
   border-radius: 5px;
   border: none;
-  background-color: #1db954; /* Update background color to green */
+  background-color: #30d158;
   color: #fff;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .submit-button:hover {
-  background-color: #1ed760; /* Update background color on hover */
+  background-color: #30d158; /* Update background color on hover */
 }
 
 /* CSS for error message */
 .error-message {
   margin-top: 10px;
   font-size: 0.9rem;
-  color: #ff6961; /* Update text color to red */
+  color: #ff453a; /* Update text color to red */
 }
 
 .model-dropdown {
