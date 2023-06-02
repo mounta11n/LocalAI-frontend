@@ -13,7 +13,9 @@ const ChatGptInterface = () => {
   const [maxTokens, setMaxTokens] = useState(50);
   const [topP, setTopP] = useState(1);
   const [currentAssistantMessage, setCurrentAssistantMessage] = useState("");
+  const [triggerWords, setTriggerWords] = useState({ user: "", assistant: "" });
   const chatContainerRef = useRef(null);
+  
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -40,7 +42,7 @@ const ChatGptInterface = () => {
             ...messages,
             {
               role: "user",
-              content: input,
+              content: triggerWords.user + input + triggerWords.assistant,
             },
           ],
           temperature: parseFloat(temperature),
@@ -50,6 +52,7 @@ const ChatGptInterface = () => {
         }),
       };
 
+      console.log("Request:", requestOptions); 
       const response = await fetch(`${host}/v1/chat/completions`, requestOptions);
 
       // let data = "";
@@ -157,6 +160,7 @@ const ChatGptInterface = () => {
 
   return (
     <div className="chat-page">
+      <div className="sidebar"></div>
     {/* Render dropdown list for models */}
     <div className="model-dropdown">
       {console.log("Rendering models:", models)} {/* Hinzufügen dieser Zeile */}
@@ -173,6 +177,40 @@ const ChatGptInterface = () => {
         ))}
       </select>
     </div>
+    <div className="trigger-dropdown">
+    {console.log("Rendering models:", triggerWords)}
+    <select
+  className="custom-select"
+      value={`${triggerWords.user}...`}
+      onChange={(e) => {
+        const selectedOption = e.target.value;
+        if (selectedOption === "Vicuna V0 ### Human: ... ### Assistant:") {
+          setTriggerWords({ user: "### Human: ", assistant: "\n### Assistant: " });
+        } else if (selectedOption === "Vicuna V1 USER: ... ASSISTANT:") {
+          setTriggerWords({ user: "USER: ", assistant: "\nASSISTANT: " });
+        } else if (selectedOption === "OpenAssistant<|prompter|> ... <|endoftext|><|assistant|>") {
+          setTriggerWords({ user: "<|prompter|>", assistant: "<|endoftext|><|assistant|>" });
+        } else if (selectedOption === "GPT4 x Vicuna ### Instruction: ... ### Response:") {
+          setTriggerWords({ user: "### Instruction:\n", assistant: "\n\n### Response: " });
+        } else if (selectedOption === "Guanaco QLoRA ### Human: ... ### Assistant:") {
+          setTriggerWords({ user: "### Human: ", assistant: "\n\n### Assistant: " });
+        } else if (selectedOption === "WizardLM 7B ... ### Response:") {
+          setTriggerWords({ user: "", assistant: "\n\n### Response:" });
+        } else if (selectedOption === "Alpaca ### Instruction: ... ### Response:") {
+          setTriggerWords({ user: "### Instruction:\n", assistant: "\n\n### Response: " });
+        } else if (selectedOption === "placeholder ... placeholder") {
+          setTriggerWords({ user: "placeholder", assistant: "placeholder" });
+        } else if (selectedOption === "placeholder ... placeholder") {
+          setTriggerWords({ user: "placeholder", assistant: "placeholder" });
+        }
+      }}
+      disabled={isLoading}
+    >
+      <option value="">Select Prompt Template</option>
+      <option value="### Human: ...">### Human: ...</option>
+      <option value="<User> ...">&lt;User&gt; ...</option>
+    </select>
+  </div>
       <div className="chat-container" ref={chatContainerRef}>
         <div className="chat-messages">
           {/* Render user input and chatbot responses */}
@@ -203,8 +241,9 @@ const ChatGptInterface = () => {
       </div>
       <div className="sidebar">
         <h3>Settings</h3>
-        <label htmlFor="temperature">Temperature:</label>
+        <label htmlFor="temperature">Temperature</label>
         <input
+          className="custom-select"
           type="number"
           id="temperature"
           name="temperature"
@@ -212,8 +251,9 @@ const ChatGptInterface = () => {
           onChange={(e) => setTemperature(e.target.value)}
         />
           <br />
-          <label htmlFor="maxTokens">Max Tokens:</label>
+          <label htmlFor="maxTokens">Max Tokens</label>
           <input
+          className="custom-select"
             type="number"
             id="maxTokens"
             name="maxTokens"
@@ -221,8 +261,9 @@ const ChatGptInterface = () => {
             onChange={(e) => setMaxTokens(e.target.value)}
         />
         <br />
-        <label htmlFor="topP">Top P:</label>
+        <label htmlFor="topP">Top P</label>
         <input
+          className="custom-select"
           type="number"
           id="topP"
           name="topP"
@@ -248,7 +289,7 @@ const ChatGptInterface = () => {
           className="submit-button"
           disabled={!input || isLoading}
         >
-          {isLoading ? "Submitting..." : "Submit"}
+          {isLoading ? "..." : ">"}
         </button>
       </div>
       {/* Render error message if there's an error */}

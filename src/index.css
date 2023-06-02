@@ -32,19 +32,37 @@ code {
   color: #989898;
 }
 
+.custom-select {
+  display: flex;
+  width: 88%;
+
+  padding: 10px;
+  margin: auto;
+  font-size: 1.1rem;
+
+
+  background-color: #3a3a3c;
+  color: #989898;
+  background-clip: padding-box;
+  border-radius: 5px;
+  border: none;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
 /* CSS for chat messages */
 .chat-container {
   height: calc(80vh - 60px);
-  width: 70%;
+  width: 62%;
   max-width: 2000px;
   margin: 0 auto;
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */
   overflow-y: scroll;
   background-color: #2c2c2e; /* Update background color to dark */
-  border-radius: 10px;
-  padding: 20px;
+  border-radius: 15px;
+  padding: 30px;
   box-sizing: border-box;
+  
 }
 
 .chat-container::-webkit-scrollbar {
@@ -61,23 +79,37 @@ code {
 
 .user-message {
   align-items: flex-end;
+  margin-left: 38%;
+
+  
 }
 
 .assistant-message {
   align-items: flex-start;
+  width: 62%;
+
+
 }
 
 .message-role {
-  font-size: 0.9rem;
+  font-size: 0.91.1rem;
   font-weight: bold;
 }
 
 .message-content {
   padding: 10px;
-  border-radius: 5px;
-  font-size: 1.1rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
   background-color: #fff; /* Update background color to white */
   color: #1c1c1e; /* Update text color to dark */
+}
+
+.no-history {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  background-color: #404044; /* Update background color to white */
+  color: #fff; /* Update text color to dark */
 }
 
 /* CSS for chat input */
@@ -100,16 +132,32 @@ code {
 .submit-button {
   padding: 10px 20px;
   border-radius: 5px;
+  font-size: 1.1rem;
   border: none;
-  background-color: #30d158;
+  background-color: #27cd41;
   color: #fff;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .submit-button:hover {
-  background-color: #30d158; /* Update background color on hover */
+  background-color: #32de48; /* Update background color on hover */
+  font-size: 1.1rem;
+  font-weight: bold;
 }
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 19%;
+  height: calc(80vh - 60px);
+  background-color: #1c1c1e;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+
 
 /* CSS for error message */
 .error-message {
