@@ -96,6 +96,17 @@ const ChatGptInterface = () => {
         }
       }
       
+      const initialPrompt = {
+        "Vicuna V1": "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions.",
+        "Alpaca": "Below is an instruction that describes a task. Write a response that appropriately completes the request."
+      };
+      
+      if (messages.length === 0 && initialPrompt[selectedModel]) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { role: "assistant", content: initialPrompt[selectedModel] },
+        ]);
+      }
 
       // Add assistant response to messages
       setMessages((prevMessages) => [
@@ -161,56 +172,6 @@ const ChatGptInterface = () => {
   return (
     <div className="chat-page">
       <div className="sidebar"></div>
-    {/* Render dropdown list for models */}
-    <div className="model-dropdown">
-      {console.log("Rendering models:", models)} {/* Hinzufügen dieser Zeile */}
-      <select
-        value={selectedModel}
-        onChange={handleModelChange}
-        disabled={isLoading}
-      >
-        <option value="">Select Model</option>
-        {models.map((model, index) => (
-          <option key={index} value={model.id}>
-            {model.id}
-          </option>
-        ))}
-      </select>
-    </div>
-    <div className="trigger-dropdown">
-    {console.log("Rendering models:", triggerWords)}
-    <select
-  className="custom-select"
-      value={`${triggerWords.user}...`}
-      onChange={(e) => {
-        const selectedOption = e.target.value;
-        if (selectedOption === "Vicuna V0 ### Human: ... ### Assistant:") {
-          setTriggerWords({ user: "### Human: ", assistant: "\n### Assistant: " });
-        } else if (selectedOption === "Vicuna V1 USER: ... ASSISTANT:") {
-          setTriggerWords({ user: "USER: ", assistant: "\nASSISTANT: " });
-        } else if (selectedOption === "OpenAssistant<|prompter|> ... <|endoftext|><|assistant|>") {
-          setTriggerWords({ user: "<|prompter|>", assistant: "<|endoftext|><|assistant|>" });
-        } else if (selectedOption === "GPT4 x Vicuna ### Instruction: ... ### Response:") {
-          setTriggerWords({ user: "### Instruction:\n", assistant: "\n\n### Response: " });
-        } else if (selectedOption === "Guanaco QLoRA ### Human: ... ### Assistant:") {
-          setTriggerWords({ user: "### Human: ", assistant: "\n\n### Assistant: " });
-        } else if (selectedOption === "WizardLM 7B ... ### Response:") {
-          setTriggerWords({ user: "", assistant: "\n\n### Response:" });
-        } else if (selectedOption === "Alpaca ### Instruction: ... ### Response:") {
-          setTriggerWords({ user: "### Instruction:\n", assistant: "\n\n### Response: " });
-        } else if (selectedOption === "placeholder ... placeholder") {
-          setTriggerWords({ user: "placeholder", assistant: "placeholder" });
-        } else if (selectedOption === "placeholder ... placeholder") {
-          setTriggerWords({ user: "placeholder", assistant: "placeholder" });
-        }
-      }}
-      disabled={isLoading}
-    >
-      <option value="">Select Prompt Template</option>
-      <option value="### Human: ...">### Human: ...</option>
-      <option value="<User> ...">&lt;User&gt; ...</option>
-    </select>
-  </div>
       <div className="chat-container" ref={chatContainerRef}>
         <div className="chat-messages">
           {/* Render user input and chatbot responses */}
@@ -271,7 +232,63 @@ const ChatGptInterface = () => {
           onChange={(e) => setTopP(e.target.value)}
         />
       </div>
+      
       <div className="chat-input">
+      <div className="dropdowns-container">
+        {/* Render dropdown list for models */}
+    <div className="model-dropdown">
+      {console.log("Rendering models:", models)} {/* Hinzufügen dieser Zeile */}
+      <select
+        value={selectedModel}
+        onChange={handleModelChange}
+        disabled={isLoading}
+      >
+        <option value="">Select Model</option>
+        {models.map((model, index) => (
+          <option key={index} value={model.id}>
+            {model.id}
+          </option>
+        ))}
+      </select>
+    </div>
+    <div className="trigger-dropdown">
+    {console.log("Rendering models:", triggerWords)}
+    <select
+  className="custom-select"
+      value={`${triggerWords.user}...`}
+      onChange={(e) => {
+        const selectedOption = e.target.value;
+        if (selectedOption === "Vicuna V0 ### Human: ... ### Assistant:") {
+          setTriggerWords({ user: "### Human: ", assistant: "\n### Assistant: " });
+        } else if (selectedOption === "Vicuna V1 USER: ... ASSISTANT:") {
+          setTriggerWords({ user: "USER: ", assistant: "\nASSISTANT: " });
+        } else if (selectedOption === "OpenAssistant<|prompter|> ... <|endoftext|><|assistant|>") {
+          setTriggerWords({ user: "<|prompter|>", assistant: "<|endoftext|><|assistant|>" });
+        } else if (selectedOption === "GPT4 x Vicuna ### Instruction: ... ### Response:") {
+          setTriggerWords({ user: "### Instruction:\n", assistant: "\n\n### Response: " });
+        } else if (selectedOption === "Guanaco QLoRA ### Human: ... ### Assistant:") {
+          setTriggerWords({ user: "### Human: ", assistant: "\n\n### Assistant: " });
+        } else if (selectedOption === "WizardLM 7B ... ### Response:") {
+          setTriggerWords({ user: "", assistant: "\n\n### Response:" });
+        } else if (selectedOption === "Alpaca ### Instruction: ... ### Response:") {
+          setTriggerWords({ user: "### Instruction:\n", assistant: "\n\n### Response: " });
+        } else if (selectedOption === "placeholder ... placeholder") {
+          setTriggerWords({ user: "placeholder", assistant: "placeholder" });
+        } else if (selectedOption === "placeholder ... placeholder") {
+          setTriggerWords({ user: "placeholder", assistant: "placeholder" });
+        }
+      }}
+      disabled={isLoading}
+    >
+      <option value="">Select Prompt Template</option>
+      <option value="Vicuna V0 ### Human: ... ### Assistant:">
+        Vicuna V0 ### Human: ... ### Assistant:
+      </option>
+      <option value="Vicuna V1 USER: ... ASSISTANT:">
+        Vicuna V1 USER: ... ASSISTANT:
+      </option>
+    </select>
+  </div>
         {/* Render input field and submit button */}
         <input
           type="text"
@@ -292,8 +309,14 @@ const ChatGptInterface = () => {
           {isLoading ? "..." : ">"}
         </button>
       </div>
+      <div className="switch-buttons">
+        <button className="switch-button">Switch 1</button>
+        <button className="switch-button">Switch 2</button>
+        <button className="switch-button">Switch 3</button>
+      </div>
       {/* Render error message if there's an error */}
       {error && <div className="error-message">{error}</div>}
+    </div>
     </div>
   );
 };
