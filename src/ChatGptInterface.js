@@ -10,6 +10,9 @@ const ChatGptInterface = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [models, setModels] = useState([]);
+  const [temperature, setTemperature] = useState(0.7);
+  const [maxTokens, setMaxTokens] = useState(50);
+  const [topP, setTopP] = useState(1);
   const [currentAssistantMessage, setCurrentAssistantMessage] = useState("");
   const chatContainerRef = useRef(null);
 
@@ -41,7 +44,9 @@ const ChatGptInterface = () => {
               content: input,
             },
           ],
-          temperature,
+          temperature: temperature,
+          max_tokens: maxTokens,
+          top_p: topP,
           stream: true,
         }),
       };
@@ -98,14 +103,15 @@ const ChatGptInterface = () => {
 
       // Clear input field and currentAssistantMessage
       setInput("");
-      setCurrentAssistantMessage("");
-    } catch (error) {
-      console.error("Error:", error);
-      setError("Failed to fetch response. Please try again: " + error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        setCurrentAssistantMessage("");
+      } catch (error) {
+        console.error("Error:", error);
+        setError("Failed to fetch response. Please try again: " + error.message);
+      } finally {
+        setIsLoading(false);
+        setInput("");
+      }
+    };
 
   const fetchModelsUsingCurl = async () => {
     const response = await fetch("http://localhost:8080/v1/models");
@@ -196,6 +202,35 @@ const ChatGptInterface = () => {
           )}
         </div>
       </div>
+      <div className="sidebar">
+        <h3>Settings</h3>
+        <label htmlFor="temperature">Temperature:</label>
+        <input
+          type="number"
+          id="temperature"
+          name="temperature"
+          value={temperature}
+          onChange={(e) => setTemperature(e.target.value)}
+        />
+          <br />
+          <label htmlFor="maxTokens">Max Tokens:</label>
+          <input
+            type="number"
+            id="maxTokens"
+            name="maxTokens"
+            value={maxTokens}
+            onChange={(e) => setMaxTokens(e.target.value)}
+        />
+        <br />
+        <label htmlFor="topP">Top P:</label>
+        <input
+          type="number"
+          id="topP"
+          name="topP"
+          value={topP}
+          onChange={(e) => setTopP(e.target.value)}
+        />
+      </div>
       <div className="chat-input">
         {/* Render input field and submit button */}
         <input
@@ -205,6 +240,9 @@ const ChatGptInterface = () => {
           className="input-field"
           placeholder="Enter your message..."
           disabled={isLoading}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleSubmit();
+          }}
         />
         <button
           onClick={handleSubmit}
