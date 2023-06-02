@@ -169,6 +169,45 @@ const ChatGptInterface = () => {
     ));
   };
 
+  const triggerLayouts = [
+    {
+      displayText: "Alpaca            | ### Instruction: ... ### Response:",
+      userTrigger: "### Instruction:\n",
+      assistantTrigger: "\n\n### Response: ",
+    },
+    {
+      displayText:  "GPT4 x Vicuna    | ### Instruction: ... ### Response:",
+      userTrigger: "### Instruction:\n",
+      assistantTrigger: "\n\n### Response: ",
+    },
+    {
+      displayText: "Guanaco QLoRA     | ### Human: ... ### Assistant:",
+      userTrigger: "### Human: ",
+      assistantTrigger: "\n\n### Assistant: " ,
+    },
+    {
+      displayText: "Vicuna V 0         | ### Human: ... ### Assistant:",
+      userTrigger: "### Human: ",
+      assistantTrigger: "\n### Assistant: ",
+    },
+    {
+      displayText: "Vicuna V 1         | USER: ... ASSISTANT:",
+      userTrigger: "USER: ",
+      assistantTrigger: "\nASSISTANT: ",
+    },
+    {
+      displayText:  "WizardLM 7B      | ... ### Response:",
+      userTrigger: "",
+      assistantTrigger: "\n\n### Response: ",
+    },
+    {
+      displayText:  "WizardLM 13B 1.0 | USER: ... ASSISTANT:",
+      userTrigger: "USER: ",
+      assistantTrigger: "ASSISTANT: ",
+    },
+    // Füge hier weitere Modelle hinzu...
+  ];
+
   return (
     <div className="chat-page">
       <div className="sidebar"></div>
@@ -232,12 +271,16 @@ const ChatGptInterface = () => {
           onChange={(e) => setTopP(e.target.value)}
         />
       </div>
-      
+            {/* Neuer Wrapper-Container für die Steuerelemente */}
+            <div className="controls-wrapper">
       <div className="chat-input">
-      <div className="dropdowns-container">
-        {/* Render dropdown list for models */}
-    <div className="model-dropdown">
-      {console.log("Rendering models:", models)} {/* Hinzufügen dieser Zeile */}
+      {/* Container für Dropdown-Menüs, Input und Switches */}
+      <div className="controls-container">
+        {/* Container für die beiden Dropdown-Menüs */}
+        <div className="dropdowns-container">
+          {/* Render dropdown list for models */}
+      <div className="model-dropdown">
+      {console.log("Rendering models:", models)}
       <select
         value={selectedModel}
         onChange={handleModelChange}
@@ -255,41 +298,31 @@ const ChatGptInterface = () => {
     {console.log("Rendering models:", triggerWords)}
     <select
   className="custom-select"
-      value={`${triggerWords.user}...`}
-      onChange={(e) => {
-        const selectedOption = e.target.value;
-        if (selectedOption === "Vicuna V0 ### Human: ... ### Assistant:") {
-          setTriggerWords({ user: "### Human: ", assistant: "\n### Assistant: " });
-        } else if (selectedOption === "Vicuna V1 USER: ... ASSISTANT:") {
-          setTriggerWords({ user: "USER: ", assistant: "\nASSISTANT: " });
-        } else if (selectedOption === "OpenAssistant<|prompter|> ... <|endoftext|><|assistant|>") {
-          setTriggerWords({ user: "<|prompter|>", assistant: "<|endoftext|><|assistant|>" });
-        } else if (selectedOption === "GPT4 x Vicuna ### Instruction: ... ### Response:") {
-          setTriggerWords({ user: "### Instruction:\n", assistant: "\n\n### Response: " });
-        } else if (selectedOption === "Guanaco QLoRA ### Human: ... ### Assistant:") {
-          setTriggerWords({ user: "### Human: ", assistant: "\n\n### Assistant: " });
-        } else if (selectedOption === "WizardLM 7B ... ### Response:") {
-          setTriggerWords({ user: "", assistant: "\n\n### Response:" });
-        } else if (selectedOption === "Alpaca ### Instruction: ... ### Response:") {
-          setTriggerWords({ user: "### Instruction:\n", assistant: "\n\n### Response: " });
-        } else if (selectedOption === "placeholder ... placeholder") {
-          setTriggerWords({ user: "placeholder", assistant: "placeholder" });
-        } else if (selectedOption === "placeholder ... placeholder") {
-          setTriggerWords({ user: "placeholder", assistant: "placeholder" });
-        }
-      }}
-      disabled={isLoading}
-    >
-      <option value="">Select Prompt Template</option>
-      <option value="Vicuna V0 ### Human: ... ### Assistant:">
-        Vicuna V0 ### Human: ... ### Assistant:
-      </option>
-      <option value="Vicuna V1 USER: ... ASSISTANT:">
-        Vicuna V1 USER: ... ASSISTANT:
-      </option>
-    </select>
-  </div>
-        {/* Render input field and submit button */}
+  value={triggerWords.user + triggerWords.assistant}
+  onChange={(e) => {
+    const selectedOption = e.target.value;
+    const layout = triggerLayouts.find(
+      (layout) => layout.userTrigger + layout.assistantTrigger === selectedOption
+    );
+    if (layout) {
+      setTriggerWords({ user: layout.userTrigger, assistant: layout.assistantTrigger });
+    }
+  }}
+  disabled={isLoading}
+>
+  <option value="">Select Prompt Template</option>
+  {triggerLayouts.map((layout, index) => (
+    <option key={index} value={layout.userTrigger + layout.assistantTrigger}>
+      {layout.displayText}
+    </option>
+  ))}
+</select>
+      </div>
+      </div>
+      </div>
+        {/* Container für User Input und Submit Button */}
+        <div className="input-container">
+          {/* Render input field and submit button */}
         <input
           type="text"
           value={input}
@@ -309,15 +342,19 @@ const ChatGptInterface = () => {
           {isLoading ? "..." : ">"}
         </button>
       </div>
-      <div className="switch-buttons">
+      </div>
+      {/* Container für die Switches */}
+      {/* <div className="switch-buttons">
+      <div class="switches-container">
         <button className="switch-button">Switch 1</button>
         <button className="switch-button">Switch 2</button>
         <button className="switch-button">Switch 3</button>
-      </div>
+      </div> */}
       {/* Render error message if there's an error */}
       {error && <div className="error-message">{error}</div>}
     </div>
     </div>
+
   );
 };
 

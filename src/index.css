@@ -30,6 +30,8 @@ code {
 
 .model-dropdown select {
   padding: 10px;
+  margin: 0;
+
   font-size: 1.1rem;
   border-radius: 5px;
   border: none;
@@ -41,9 +43,10 @@ code {
 
 .custom-select {
   display: flex;
-  width: 88%;
+  /* width: 99%; */
   padding: 10px;
-  margin: auto;
+  /* margin: auto; */
+  margin: 0;
   font-size: 1.1rem;
   background-color: #3a3a3c;
   color: #989898;
@@ -64,7 +67,7 @@ code {
   scrollbar-width: none;
   overflow-y: scroll;
   background-color: #2c2c2e;
-  border-radius: 15px;
+  border-radius: 8px;
   padding: 30px;
   box-sizing: border-box;
 }
@@ -162,6 +165,8 @@ code {
 
 .submit-button {
   padding: 10px 20px;
+  width: 500px;
+  height: 38%;
   border-radius: 5px;
   font-size: 1.1rem;
   border: none;
@@ -186,6 +191,7 @@ code {
   flex-direction: column;
   gap: 10px;
   width: 19%;
+  margin-top: 20px;
 }
 
 
@@ -194,6 +200,8 @@ code {
   padding: 10px;
   font-size: 1.1rem;
   border-radius: 5px;
+  
+  
   border: none;
   background-color: #3a3a3c;
   color: #989898;
@@ -213,4 +221,53 @@ code {
 
 .model-dropdown {
   margin-bottom: 20px;
+}
+
+
+
+/* Container für Dropdown-Menüs, Input und Switches */
+.controls-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+
+
+/* Container für die beiden Dropdown-Menüs */
+.dropdowns-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 33%;
+
+}
+
+
+
+/* Container für User Input und Submit Button */
+.input-container {
+  display: flex;
+  gap: 10px;
+  width: 33%;
+}
+
+
+
+/* Container für die Switches */
+.switches-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 33%;
+}
+
+
+
+/* Wrapper-Container für die Steuerelemente */
+.controls-wrapper {
+  width: 62%;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
 }
