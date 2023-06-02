@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, Fragment } from "react";
 import "./index.css";
 
 const host = "http://localhost:8080";
-const temperature = 0.7;
 
 const ChatGptInterface = () => {
   const [messages, setMessages] = useState([]);
@@ -44,16 +43,16 @@ const ChatGptInterface = () => {
               content: input,
             },
           ],
-          temperature: temperature,
-          max_tokens: maxTokens,
-          top_p: topP,
+          temperature: parseFloat(temperature),
+          max_tokens: parseInt(maxTokens, 10),
+          top_p: parseFloat(topP),
           stream: true,
         }),
       };
 
       const response = await fetch(`${host}/v1/chat/completions`, requestOptions);
 
-      let data = "";
+      // let data = "";
       const reader = response.body.getReader();
       let partialData = "";
       let done = false;
