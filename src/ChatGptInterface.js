@@ -15,10 +15,50 @@ const ChatGptInterface = () => {
   const [currentAssistantMessage, setCurrentAssistantMessage] = useState("");
   const [triggerWords, setTriggerWords] = useState({ user: "", assistant: "" });
   const chatContainerRef = useRef(null);
-  
+  const [semanticSearchEnabled, setSemanticSearchEnabled] = useState(false);
+  // In dieser Version des Codes habe ich eine Flask-Anwendung erstellt und die interaktive Eingabeaufforderung durch einen API-Endpunkt `/query` ersetzt, der auf POST-Anfragen reagiert. Die Anwendung erwartet JSON-Daten mit dem Schlüssel `input_text` und optional `k_value`. Die Antwort enthält die ähnlichsten Texte und deren Ähnlichkeitswerte als JSON.
 
-  const handleInputChange = (e) => {
+  // Um diese Flask-Anwendung auszuführen, musst du zuerst Flask installieren, falls du das noch nicht getan hast:
+  
+  // ```
+  // pip install Flask
+  // ```
+  
+  // Dann kannst du die Anwendung mit dem folgenden Befehl starten:
+  
+  // ```
+  // python app.py
+  // ```
+  
+  // Deine React-Anwendung kann nun HTTP-POST-Anfragen an den Endpunkt `http://localhost:5000/query` senden, um die gewünschten Informationen von BERT zu erhalten. Du musst entsprechende Anpassungen in deinem JavaScript-Code vornehmen, um diese Anfragen zu senden und die Antworten zu verarbeiten.
+  const {PythonShell} = require('python-shell');
+
+let flaskApp = new PythonShell('app.py', {
+  pythonOptions: ['-u'], // Unbuffered output, useful for real-time logging
+  scriptPath: './app.py' // Update this to the correct path
+});
+
+flaskApp.on('message', (message) => {
+    console.log('Flask App:', message);
+  });
+
+flaskApp.end(function(err, code, signal) {
+  if (err) throw err;
+  console.log(`Flask App exited with code ${code} and signal ${signal}`);
+});
+
+  function handleInputChange(e) {
     setInput(e.target.value);
+  }
+
+  const querySemanticSearch = async (text, k = 3) => {
+    const response = await fetch(`http://${host}:8085`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: text }),
+    });
+    const data = await response.json();
+    return [data.closest_texts, data.closest_similarities];
   };
 
   const handleSubmit = async () => {
@@ -33,6 +73,13 @@ const ChatGptInterface = () => {
     setIsLoading(true);
 
     try {
+      let userInput = input;
+      if (semanticSearchEnabled) {
+        const [closestTexts, closestSimilarities] = await querySemanticSearch(input);
+        // Hier kannst du den semantischen Kontext auswählen, z.B. den ähnlichsten Text
+        const semanticContext = closestTexts[0];
+        userInput += semanticContext;
+      }
       const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -42,7 +89,7 @@ const ChatGptInterface = () => {
             ...messages,
             {
               role: "user",
-              content: triggerWords.user + input + triggerWords.assistant,
+              content: triggerWords.user + userInput + triggerWords.assistant,
             },
           ],
           temperature: parseFloat(temperature),
@@ -178,7 +225,7 @@ const ChatGptInterface = () => {
     {
       displayText:  "GPT4 x Vicuna    | ### Instruction: ... ### Response:",
       userTrigger: "### Instruction:\n",
-      assistantTrigger: "\n\n### Response: ",
+      assistantTrigger: "\\n\\n### Response: ",
     },
     {
       displayText: "Guanaco QLoRA     | ### Human: ... ### Assistant:",
@@ -344,17 +391,22 @@ const ChatGptInterface = () => {
       </div>
       </div>
       {/* Container für die Switches */}
-      {/* <div className="switch-buttons">
+      <div className="switch-buttons">
       <div class="switches-container">
-        <button className="switch-button">Switch 1</button>
-        <button className="switch-button">Switch 2</button>
-        <button className="switch-button">Switch 3</button>
-      </div> */}
+      <label className="switch">
+  <input
+    type="checkbox"
+    checked={semanticSearchEnabled}
+    onChange={() => setSemanticSearchEnabled(!semanticSearchEnabled)}
+  />
+  <span className="slider round"></span>
+</label>
+      </div>
       {/* Render error message if there's an error */}
       {error && <div className="error-message">{error}</div>}
     </div>
     </div>
-
+    </div>
   );
 };
 
